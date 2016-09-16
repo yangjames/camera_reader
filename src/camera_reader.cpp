@@ -1,31 +1,34 @@
+#include <ros/ros.h>
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
-using namespace cv;
-using namespace std;
+int main(int argc, char **argv) {
+    ros::init(argc, argv, "camera_reader");
+    ros::NodeHandle n;
+    ros::Rate loop_rate(100);
+    cv::VideoCapture cap(0);
 
-int main() {
-    VideoCapture cap(0);
     if (!cap.isOpened()) {
-        cout << "Cannot open the video cam" << endl;
+        std::cout << "Cannot open the video cam" << std::endl;
         return -1;
     }
     double dWidth  = cap.get(CV_CAP_PROP_FRAME_WIDTH);
     double dHeight = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
-    cout << "Frame size:" << dWidth << " x " << dHeight << endl;
-    namedWindow("MyVideo",CV_WINDOW_AUTOSIZE);
-    while(1) {
-        Mat frame;
+    std::cout << "Frame size:" << dWidth << " x " << dHeight << std::endl;
+
+    cv::namedWindow("MyVideo",CV_WINDOW_AUTOSIZE);
+
+    while(ros::ok()) {
+        cv::Mat frame;
         bool bSuccess = cap.read(frame);
         if (!bSuccess) {
-            cout << "Cannot read a frame from video stream" << endl;
+            std::cout << "Cannot read a frame from video stream" << std::endl;
             break;
         }
-        imshow("MyVideo",frame);
-        if (waitKey(30) == 27) {
-            cout << "esc key is pressed by user" << endl;
-            break;
-        }
+        cv::imshow("MyVideo",frame);
+        cv::waitKey(1);
+        ros::spinOnce();
+        loop_rate.sleep();
     }
     return 0;
 }

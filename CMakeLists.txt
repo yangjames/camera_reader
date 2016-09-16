@@ -3,11 +3,13 @@ project(camera_reader)
 
 find_package(OpenCV 3.1.0 REQUIRED)
 find_package(catkin REQUIRED
+  roscpp
   )
 
 catkin_package()
 
 include_directories(
+  ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   )
 
